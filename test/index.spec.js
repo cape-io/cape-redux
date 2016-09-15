@@ -1,7 +1,7 @@
 import test from 'tape'
-import { isFunction } from 'lodash'
+import { isFunction, partial } from 'lodash'
 
-import { thunkAction } from '../src'
+import { thunkAction, mapDispatchToProps } from '../src'
 import { state, props } from './mock'
 
 test('thunkAction', (t) => {
@@ -25,4 +25,24 @@ test('thunkAction', (t) => {
     t.end()
   }
   calledAction(dispatch, getState)
+})
+
+function makeAction(type) { return { type } }
+test('mapDispatchToProps', (t) => {
+  function getActions({ item, title }) {
+    return {
+      foo: partial(makeAction, item.id),
+      bar: partial(makeAction, title),
+    }
+  }
+  const expectedTypes = [ 'bar', 'strawberry' ]
+  function dispatch({ type }) {
+    t.equal(type, expectedTypes.shift())
+  }
+  const { foo, bar } = mapDispatchToProps(getActions)(dispatch, props)
+  t.ok(isFunction(foo))
+  foo()
+  t.ok(isFunction(bar))
+  bar()
+  t.end()
 })
