@@ -1,38 +1,5 @@
-import {
-  cond, defaultTo, flow, get, identical,
-  isEmpty, isObject, negate, over, property, spread, stubTrue,
-} from 'lodash'
-import fpDefaultTo from 'lodash/fp/defaultTo'
-import fpPartialRight from 'lodash/fp/partialRight'
-// Returns true if sent a value that is exactly false.
-export const isFalse = identical(false)
-// Find the first truthy argument value.
-export const firstValArg = flow(Array, find)
-
-// Given two paths, select the first one that is defined.
-export function getDefault(path1, path2) {
-  return flow(
-    over([ property(path1), property(path2) ]),
-    spread(defaultTo)
-  )
-}
-// Returns the collection property at key as determined by idSelector.
-export function getSelect(collectionSelector, idSelector) {
-  return flow(over([ collectionSelector, idSelector ]), spread(get))
-}
-// Send arg to selector then get property at path. Apply defaultValue.
-export function select(selector, path, defaultValue = null) {
-  return flow(selector, property(path), fpDefaultTo(defaultValue))
-}
-// See createSelector(). This has no memoization.
-export function simpleSelector(...funcs) {
-  const last = funcs.pop()
-  return flow(over(funcs), spread(last))
-}
-// Turn empty objs and arrays to false. Turn other vals into a boolean.
-export const toBool = cond([ [ isObject, negate(isEmpty) ], [ stubTrue, Boolean ] ])
-// Select something and turn it into boolean.
-export const boolSelector = fpPartialRight(fpPartialRight, toBool)
+import { bindActionCreators } from 'redux'
+import { isError, isFunction, identity, isObject, isString, isUndefined, pickBy } from 'lodash'
 
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkActionSelector(...funcs) {
@@ -58,4 +25,28 @@ export function addListener(selector, onChange, store) {
     }
   }
   return subscribe(handleChange)
+}
+export function createAction(type, payloadCreator) {
+  const getPayload = isFunction(payloadCreator) ? payloadCreator : identity
+  return function actionCreator(arg1, arg2, arg3) {
+    const payload = getPayload(arg1)
+    const hasError = arg2 === true
+    const meta = isObject(arg2) ? arg2 : arg3
+    const action = {
+      type,
+    }
+    if (isError(payload)) {
+      action.error = true
+      action.payload = pickBy(payload, val => identity(val) && !isFunction(val))
+    } else if (hasError) {
+      action.error = true
+      action.payload = isString(payload) ? { message: payload } : payload
+    } else if (!isUndefined(payload)) {
+      action.payload = payload
+    }
+    if (isObject(meta)) {
+      action.meta = meta
+    }
+    return action
+  }
 }
