@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { isError, isFunction, identity, isObject, isString, isUndefined, pickBy } from 'lodash'
 
 // Like createSelector but it builds and dispatches an action creator.
-export function thunkActionSelector(...funcs) {
+export function thunkAction(...funcs) {
   const action = funcs.pop()
   return (props, ...args) => (dispatch, getState) => {
     const params = funcs.map(dependency => dependency(getState(), props, ...args))
