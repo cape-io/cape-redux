@@ -25,7 +25,7 @@ export function addListener(selector, onChange, store) {
 export const createObj = curry((key, val) => ({ [key]: val }))
 export const payloadIsErr = overSome(isError, property('error'), property('isBoom'))
 export const payloadFromErr = pick([ 'error', 'message', 'fileName', 'lineNumber', 'type' ])
-export const arg2True = flow(nthArg(1), overEvery([ Boolean, identical(true) ]))
+export const arg2True = flow(nthArg(1), identical(true))
 export const msgObj = createObj('message')
 export const getPayload = cond([
   [ overEvery(arg2True, isString), msgObj ],
