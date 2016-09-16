@@ -1,5 +1,11 @@
 import { bindActionCreators } from 'redux'
-import { isError, isFunction, identity, isObject, isString, isUndefined, pickBy } from 'lodash'
+import {
+  constant, cond, curry, flow, identical, isError, isFunction, identity, isString, isUndefined,
+  noop, nthArg, over, overEvery, overSome, property, stubTrue,
+} from 'lodash'
+import omitBy from 'lodash/fp/omitBy'
+import pick from 'lodash/fp/pick'
+import zipObject from 'lodash/fp/zipObject'
 
 // Trigger a call to onChange() when result of selector changes.
 export function addListener(selector, onChange, store) {
@@ -14,30 +20,28 @@ export function addListener(selector, onChange, store) {
   }
   return subscribe(handleChange)
 }
-// @TODO Make this more functional style.
-export function createAction(type, payloadCreator) {
-  const getPayload = isFunction(payloadCreator) ? payloadCreator : identity
-  return function actionCreator(arg1, arg2, arg3) {
-    const payload = getPayload(arg1)
-    const hasError = arg2 === true
-    const meta = isObject(arg2) ? arg2 : arg3
-    const action = {
-      type,
-    }
-    if (isError(payload)) {
-      action.error = true
-      action.payload = pickBy(payload, val => identity(val) && !isFunction(val))
-    } else if (hasError) {
-      action.error = true
-      action.payload = isString(payload) ? { message: payload } : payload
-    } else if (!isUndefined(payload)) {
-      action.payload = payload
-    }
-    if (isObject(meta)) {
-      action.meta = meta
-    }
-    return action
-  }
+
+// @TODO Isn't there a better way to create an obj?
+export const createObj = curry((key, val) => ({ [key]: val }))
+export const payloadIsErr = overSome(isError, property('error'), property('isBoom'))
+export const payloadFromErr = pick([ 'error', 'message', 'fileName', 'lineNumber', 'type' ])
+export const arg2True = flow(nthArg(1), overEvery([ Boolean, identical(true) ]))
+export const msgObj = createObj('message')
+export const getPayload = cond([
+  [ overEvery(arg2True, isString), msgObj ],
+  [ payloadIsErr, payloadFromErr ],
+  [ stubTrue, identity ],
+])
+export const hasError = cond([
+  [ overSome(arg2True, payloadIsErr), stubTrue ], [ stubTrue, noop ],
+])
+export const getMeta = cond([ [ arg2True, nthArg(2) ], [ stubTrue, nthArg(1) ] ])
+export function createAction(type, payloadCreator = getPayload, metaCreator = getMeta) {
+  return flow(
+    over(constant(type), payloadCreator, hasError, metaCreator),
+    zipObject([ 'type', 'payload', 'error', 'meta' ]),
+    omitBy(isUndefined)
+  )
 }
 // Send reducers obj where key is type and value is func with (state, payload) sig.
 export function createReducer(reducers, defaultState = {}) {
