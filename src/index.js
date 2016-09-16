@@ -50,3 +50,10 @@ export function createAction(type, payloadCreator) {
     return action
   }
 }
+export function createReducer(reducers, defaultState = {}) {
+  return function reducer(state = defaultState, action) {
+    if (action.error || !action.type || !isFunction(reducers[action.type])) return state
+    if (!action.payload) return state
+    return reducers[action.type](state, action.payload)
+  }
+}

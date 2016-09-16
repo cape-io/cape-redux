@@ -1,7 +1,8 @@
 import test from 'tape'
-import { isFunction, partial } from 'lodash'
+import { createStore } from 'redux'
+import { isFunction, partial, property } from 'lodash'
 
-import { thunkAction, mapDispatchToProps } from '../src'
+import { addListener, createReducer, thunkAction, mapDispatchToProps } from '../src'
 import { state, props } from './mock'
 
 test('thunkAction', (t) => {
@@ -44,5 +45,22 @@ test('mapDispatchToProps', (t) => {
   foo()
   t.ok(isFunction(bar))
   bar()
+  t.end()
+})
+
+const reducer = createReducer({
+  UPDATE: (preState, payload) => ({ ...preState, test: payload }),
+  OTHER: (preState, payload) => ({ ...preState, other: payload }),
+})
+const store = createStore(reducer)
+test('addListener', (t) => {
+  function onChange({ getState }, currentValue) {
+    t.ok(isFunction(getState))
+    t.equal(currentValue, 'patch')
+  }
+  const selector = property('test')
+  addListener(selector, onChange, store)
+  store.dispatch({ type: 'UPDATE', payload: 'patch' })
+  store.dispatch({ type: 'OTHER', payload: 'apple' })
   t.end()
 })
