@@ -11,8 +11,9 @@ import { handleChanges } from 'cape-lodash'
 
 // Trigger a call to onChange() when result of selector changes.
 export function addListener(store, selector, onChange) {
-  const getValue = flow(store.getState, selector)
-  return store.subscribe(handleChanges(getValue, partial(onChange, store)))
+  return store.subscribe(handleChanges(
+    flow(store.getState, selector), partial(onChange, store)
+  ))
 }
 
 // @TODO Isn't there a better way to create an obj?
