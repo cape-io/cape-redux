@@ -59,7 +59,7 @@ test('addListener', (t) => {
     t.equal(currentValue, 'patch')
   }
   const selector = property('test')
-  addListener(selector, onChange, store)
+  addListener(store, selector, onChange)
   store.dispatch({ type: 'UPDATE', payload: 'patch' })
   store.dispatch({ type: 'OTHER', payload: 'apple' })
   t.end()

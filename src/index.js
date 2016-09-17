@@ -1,24 +1,18 @@
 import { bindActionCreators } from 'redux'
 import {
-  constant, cond, curry, flow, identical, isError, isFunction, identity, isString, isUndefined,
-  noop, nthArg, over, overEvery, overSome, property, stubTrue,
+  constant, cond, curry, flow, identical,
+  isError, isFunction, identity, isString, isUndefined,
+  noop, nthArg, over, overEvery, overSome, partial, property, stubTrue,
 } from 'lodash'
 import omitBy from 'lodash/fp/omitBy'
 import pick from 'lodash/fp/pick'
 import zipObject from 'lodash/fp/zipObject'
+import { handleChanges } from 'cape-lodash'
 
 // Trigger a call to onChange() when result of selector changes.
-export function addListener(selector, onChange, store) {
-  const { getState, subscribe } = store
-  let currentValue = selector(getState())
-  function handleChange() {
-    const previousValue = currentValue
-    currentValue = selector(getState())
-    if (previousValue !== currentValue) {
-      onChange(store, currentValue)
-    }
-  }
-  return subscribe(handleChange)
+export function addListener(store, selector, onChange) {
+  const getValue = flow(store.getState, selector)
+  return store.subscribe(handleChanges(getValue, partial(onChange, store)))
 }
 
 // @TODO Isn't there a better way to create an obj?

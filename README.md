@@ -1,6 +1,6 @@
-# cape-redux v1.0.0
+# cape-redux v1.1.0
 
-- `addListener(selector, onChange, store)` - Trigger a call to onChange() when result of selector changes.
+- `addListener(store, selector, onChange)` - Trigger a call to onChange() when result of selector changes.
 - `createAction(type, payloadCreator)` - Makes an action creator.
 - `createReducer(reducers, defaultState = {})` - Send reducers obj where key is type and value is func with (state, payload) sig.
 - `mapDispatchToProps(getActions)` - getActions func is passed state. Result is passed to bindActionCreators.
