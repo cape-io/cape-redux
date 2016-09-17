@@ -10,7 +10,7 @@ import zipObject from 'lodash/fp/zipObject'
 import { handleChanges } from 'cape-lodash'
 
 // Trigger a call to onChange() when result of selector changes.
-export function addListener(store, selector, onChange) {
+export function addListener(selector, store, onChange) {
   return store.subscribe(handleChanges(
     flow(store.getState, selector), partial(onChange, store)
   ))

@@ -54,13 +54,13 @@ const reducer = createReducer({
 })
 const store = createStore(reducer)
 test('addListener', (t) => {
+  t.plan(2)
   function onChange({ getState }, currentValue) {
     t.ok(isFunction(getState))
     t.equal(currentValue, 'patch')
   }
   const selector = property('test')
-  addListener(store, selector, onChange)
+  addListener(selector, store, onChange)
   store.dispatch({ type: 'UPDATE', payload: 'patch' })
   store.dispatch({ type: 'OTHER', payload: 'apple' })
-  t.end()
 })
