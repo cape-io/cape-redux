@@ -1,13 +1,15 @@
 import { bindActionCreators } from 'redux'
 import {
-  constant, cond, curry, flow, identical,
-  isError, isFunction, identity, isString, isUndefined,
+  constant, cond, curry, filter, flow, identical, invoke,
+  isError, isFunction, identity, isString, isUndefined, negate,
   noop, nthArg, over, overEvery, overSome, partial, property, stubTrue,
 } from 'lodash'
+import defaults from 'lodash/fp/defaults'
+import has from 'lodash/fp/has'
 import omitBy from 'lodash/fp/omitBy'
 import pick from 'lodash/fp/pick'
 import zipObject from 'lodash/fp/zipObject'
-import { handleChanges } from 'cape-lodash'
+import { handleChanges, hasMethodOf } from 'cape-lodash'
 
 // Trigger a call to onChange() when result of selector changes.
 export function addListener(selector, store, onChange) {
@@ -38,12 +40,32 @@ export function createAction(type, payloadCreator = getPayload, metaCreator = ge
     omitBy(isUndefined)
   )
 }
+export const missingType = negate(has('type'))
+export const missingPayload = negate(has('payload'))
+export const getError = property('error')
+export function noReducerOfType(reducers) {
+  return flow(property('type'), negate(hasMethodOf(reducers)))
+}
+export function invalidAction(reducers, { skipErrors, skipNoPayload }) {
+  return overSome(filter([
+    missingType,
+    skipErrors && getError,
+    skipNoPayload && missingPayload,
+    noReducerOfType(reducers),
+  ], isFunction))
+}
+export const reducerDefaults = defaults({
+  actionPick: property('payload'),
+  skipErrors: true,
+  skipNoPayload: false,
+})
 // Send reducers obj where key is type and value is func with (state, payload) sig.
-export function createReducer(reducers, defaultState = {}) {
+export function createReducer(reducers, defaultState = {}, options = {}) {
+  const opts = reducerDefaults(options)
+  const skipAction = invalidAction(reducers, opts)
   return function reducer(state = defaultState, action) {
-    if (action.error || !action.type || !isFunction(reducers[action.type])) return state
-    if (!action.payload) return state
-    return reducers[action.type](state, action.payload)
+    if (skipAction(action)) return state
+    return invoke(reducers, action.type, state, opts.actionPick(action))
   }
 }
 // getActions() is passed state. Result is passed to bindActionCreators.
