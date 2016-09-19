@@ -46,12 +46,13 @@ export const getError = property('error')
 export function noReducerOfType(reducers) {
   return flow(property('type'), negate(hasMethodOf(reducers)))
 }
-export function invalidAction(reducers, { skipErrors, skipNoPayload }) {
+export function invalidAction(reducers, { isInvalidAction, skipErrors, skipNoPayload }) {
   return overSome(filter([
     missingType,
     skipErrors && getError,
     skipNoPayload && missingPayload,
     noReducerOfType(reducers),
+    isInvalidAction,
   ], isFunction))
 }
 export const reducerDefaults = defaults({
