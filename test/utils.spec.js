@@ -70,5 +70,8 @@ test('set', (t) => {
   const obj2 = foo(obj, 'dog')
   t.false(obj === obj2)
   t.equal(obj2.foo, 'dog')
+  const obj3 = set('bar', obj2, 'ice')
+  t.false(obj3 === obj2)
+  t.deepEqual(obj3, { foo: 'dog', bar: 'ice' })
   t.end()
 })
