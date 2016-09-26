@@ -2,14 +2,10 @@ import test from 'tape'
 import { identity, noop } from 'lodash'
 
 import {
-  createObj, payloadIsErr, payloadFromErr, arg2True, msgObj, getPayload,
+  payloadIsErr, payloadFromErr, arg2True, msgObj, getPayload,
   hasError, getMeta, createAction,
 } from '../src'
 
-test('createObj', (t) => {
-  t.deepEqual(createObj('foo', 'bar'), { foo: 'bar' })
-  t.end()
-})
 test('payloadIsErr', (t) => {
   t.ok(payloadIsErr(new Error('err')), 'Error')
   t.ok(payloadIsErr({ error: true }), 'error prop')
