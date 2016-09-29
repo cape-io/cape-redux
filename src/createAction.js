@@ -20,6 +20,7 @@ export const hasError = cond([
   [ overSome(arg2True, payloadIsErr), stubTrue ], [ stubTrue, noop ],
 ])
 export const getMeta = cond([ [ arg2True, nthArg(2) ], [ stubTrue, nthArg(1) ] ])
+// @TODO Need some validation of payload.
 export function createAction(type, payloadCreator = getPayload, metaCreator = getMeta) {
   return flow(
     over(constant(type), payloadCreator, hasError, metaCreator),
