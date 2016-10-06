@@ -1,5 +1,5 @@
 import {
-  constant, cond, flow, identical, identity, isError, isString, isUndefined,
+  constant, cond, flow, identical, identity, isError, isFunction, isString, isUndefined,
   noop, nthArg, over, overEvery, overSome, property, stubTrue,
 } from 'lodash'
 import omitBy from 'lodash/fp/omitBy'
@@ -22,6 +22,8 @@ export const hasError = cond([
 export const getMeta = cond([ [ arg2True, nthArg(2) ], [ stubTrue, nthArg(1) ] ])
 // @TODO Need some validation of payload.
 export function createAction(type, payloadCreator = getPayload, metaCreator = getMeta) {
+  if (!isFunction(payloadCreator)) throw new Error('payloadCreator must be a func.')
+  if (!isFunction(metaCreator)) throw new Error('metaCreator must be a func.')
   return flow(
     over(constant(type), payloadCreator, hasError, metaCreator),
     zipObject([ 'type', 'payload', 'error', 'meta' ]),
