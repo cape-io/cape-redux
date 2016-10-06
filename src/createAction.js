@@ -11,11 +11,14 @@ export const payloadIsErr = overSome(isError, property('error'), property('isBoo
 export const payloadFromErr = pick([ 'error', 'message', 'fileName', 'lineNumber', 'type' ])
 export const arg2True = flow(nthArg(1), identical(true))
 export const msgObj = createObj('message')
-export const getPayload = cond([
-  [ overEvery(arg2True, isString), msgObj ],
-  [ payloadIsErr, payloadFromErr ],
-  [ stubTrue, identity ],
-])
+export function createGetPayload(lastFunc = identity) {
+  return cond([
+    [ overEvery(arg2True, isString), msgObj ],
+    [ payloadIsErr, payloadFromErr ],
+    [ stubTrue, lastFunc ],
+  ])
+}
+export const getPayload = createGetPayload()
 export const hasError = cond([
   [ overSome(arg2True, payloadIsErr), stubTrue ], [ stubTrue, noop ],
 ])
