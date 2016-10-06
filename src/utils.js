@@ -15,8 +15,7 @@ export function mapDispatchToProps(getActions) {
 }
 
 export const set = curry((key, state, value) => ({ ...state, [key]: value }))
-
-// Returns function that will set value at key based on payload.
+export const imSet = curry((key, state, value) => state.set(key, value))
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkAction(...funcs) {
   const action = funcs.pop()
