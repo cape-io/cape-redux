@@ -35,7 +35,7 @@ export function immutableState(state, { makeImmutable }) {
 export function createReducer(reducers, defaultState = {}, options = {}) {
   const opts = reducerDefaults(options)
   const skipAction = invalidAction(reducers, opts)
-  return function reducer(state = defaultState, action) {
+  return function reducer(state = immutableState(defaultState, opts), action) {
     if (skipAction(action)) return state
     return invoke(reducers, action.type, immutableState(state, opts), opts.actionPick(action))
   }
