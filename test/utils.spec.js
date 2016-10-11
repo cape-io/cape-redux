@@ -1,8 +1,10 @@
 import test from 'tape'
 import { createStore } from 'redux'
-import { isFunction, partial, property } from 'lodash'
+import { constant, isFunction, partial, property } from 'lodash'
 
-import { addListener, createReducer, merge, set, thunkAction, mapDispatchToProps } from '../src'
+import {
+  addListener, createReducer, merge, set, thunkAction, mapDispatchToProps, thunkSelect,
+} from '../src'
 import { state, props } from './mock'
 
 test('thunkAction', (t) => {
@@ -20,7 +22,7 @@ test('thunkAction', (t) => {
   t.ok(isFunction(createdAction), 'isFunction')
   const calledAction = createdAction(props)
   t.ok(isFunction(calledAction), 'isFunction')
-  function getState() { return state }
+  const getState = constant(state)
   function dispatch(act) {
     t.equal(act.type, 'foo', 'action obj')
     t.end()
@@ -84,5 +86,10 @@ test('set', (t) => {
   const obj3 = set('bar', obj2, 'ice')
   t.false(obj3 === obj2)
   t.deepEqual(obj3, { foo: 'dog', bar: 'ice' })
+  t.end()
+})
+test('thunkSelect', (t) => {
+  const getState = constant(state)
+  t.equal(thunkSelect(property('user.id'))(null, getState), 'anon')
   t.end()
 })

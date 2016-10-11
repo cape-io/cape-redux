@@ -25,3 +25,6 @@ export function thunkAction(...funcs) {
     dispatch(action(...params))
   }
 }
+export function thunkSelect(selector) {
+  return (dispatch, getState) => selector(getState())
+}

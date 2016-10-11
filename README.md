@@ -1,4 +1,4 @@
-# cape-redux v1.4.2
+# cape-redux v1.5.0
 
 - `addListener(selector, store, onChange)` - Trigger a call to onChange() when result of selector changes.
 - `createAction(type, payloadCreator)` - Makes an action creator.
@@ -8,3 +8,4 @@
 - `imSet(key, obj, value)` - curried. Calls `set` on object with `key` and `value` arguments.
 - `set(key, obj, value)` - curried. return new object with key set as value on obj.
 - `thunkAction` - Like createSelector but it builds and dispatches an action creator.
+- `thunkSelect` - Send getState() to selector from thunk arg signature.
