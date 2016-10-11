@@ -1,4 +1,4 @@
-# cape-redux v1.4.1
+# cape-redux v1.4.2
 
 - `addListener(selector, store, onChange)` - Trigger a call to onChange() when result of selector changes.
 - `createAction(type, payloadCreator)` - Makes an action creator.

@@ -13,7 +13,8 @@ export function addListener(selector, store, onChange) {
 export function mapDispatchToProps(getActions) {
   return (dispatch, props) => bindActionCreators(getActions(props), dispatch)
 }
-export const merge = curry((...objects) => Object.assign({}, ...objects))
+export function merge(object, ...sources) { return Object.assign({}, object, ...sources) }
+export const fpMerge = curry(merge, 2)
 export const set = curry((key, state, value) => ({ ...state, [key]: value }))
 export const imSet = curry((key, state, value) => state.set(key, value))
 // Like createSelector but it builds and dispatches an action creator.
