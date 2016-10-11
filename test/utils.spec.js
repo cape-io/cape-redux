@@ -2,7 +2,7 @@ import test from 'tape'
 import { createStore } from 'redux'
 import { isFunction, partial, property } from 'lodash'
 
-import { addListener, createReducer, set, thunkAction, mapDispatchToProps } from '../src'
+import { addListener, createReducer, merge, set, thunkAction, mapDispatchToProps } from '../src'
 import { state, props } from './mock'
 
 test('thunkAction', (t) => {
@@ -63,6 +63,15 @@ test('addListener', (t) => {
   addListener(selector, store, onChange)
   store.dispatch({ type: 'UPDATE', payload: 'patch' })
   store.dispatch({ type: 'OTHER', payload: 'apple' })
+})
+test('merge', (t) => {
+  const obj1 = { kai: 'foo', rev: 'minor' }
+  const obj2 = { rev: 'bar' }
+  const obj3 = merge(obj1, obj2)
+  t.false(obj1 === obj3)
+  t.false(obj2 === obj3)
+  t.deepEqual(obj3, { kai: 'foo', rev: 'bar' })
+  t.end()
 })
 test('set', (t) => {
   const foo = set('foo')
