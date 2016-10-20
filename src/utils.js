@@ -1,4 +1,4 @@
-import { curry, flow, partial } from 'lodash'
+import { curry, flow, isFunction, partial } from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
 
@@ -25,6 +25,7 @@ export function thunkAction(...funcs) {
     dispatch(action(...params))
   }
 }
-export function thunkSelect(selector) {
-  return (dispatch, getState) => selector(getState())
+export function thunkSelect(selector, props) {
+  if (!isFunction(selector)) throw new Error('selector must be a function')
+  return (dispatch, getState) => selector(getState(), props)
 }

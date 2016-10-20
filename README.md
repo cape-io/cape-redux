@@ -8,4 +8,4 @@
 - `imSet(key, obj, value)` - curried. Calls `set` on object with `key` and `value` arguments.
 - `set(key, obj, value)` - curried. return new object with key set as value on obj.
 - `thunkAction` - Like createSelector but it builds and dispatches an action creator.
-- `thunkSelect` - Send getState() to selector from thunk arg signature.
+- `thunkSelect(selector, props)` - Send getState() and props to selector from thunk arg signature.

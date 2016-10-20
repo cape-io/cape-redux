@@ -1,6 +1,6 @@
 import test from 'tape'
 import { createStore } from 'redux'
-import { constant, isFunction, partial, property } from 'lodash'
+import { constant, flow, isFunction, nthArg, partial, property } from 'lodash'
 
 import {
   addListener, createReducer, merge, set, thunkAction, mapDispatchToProps, thunkSelect,
@@ -91,5 +91,7 @@ test('set', (t) => {
 test('thunkSelect', (t) => {
   const getState = constant(state)
   t.equal(thunkSelect(property('user.id'))(null, getState), 'anon')
+  const selector = flow(nthArg(1), property('id'))
+  t.equal(thunkSelect(selector, { id: 'foo', bar: 'cat' })(null, getState), 'foo')
   t.end()
 })
