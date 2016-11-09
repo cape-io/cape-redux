@@ -16,6 +16,10 @@ export function mapDispatchToProps(getActions) {
 export function merge(object, ...sources) { return Object.assign({}, object, ...sources) }
 export const fpMerge = curry(merge, 2)
 export const set = curry((key, state, value) => ({ ...state, [key]: value }))
+export const setIn = curry(([ key, ...rest ], state, value) => {
+  if (!rest.length) return set(key, state, value)
+  return set(key, state, setIn(rest, state[key], value))
+})
 export const imSet = curry((key, state, value) => state.set(key, value))
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkAction(...funcs) {

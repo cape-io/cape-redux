@@ -6,6 +6,7 @@
 - `mapDispatchToProps(getActions)` - getActions func is passed state. Result is passed to bindActionCreators.
 - `merge(object, [sources])` - curried. Creates a new object with the result of sources spread over object.
 - `imSet(key, obj, value)` - curried. Calls `set` on object with `key` and `value` arguments.
-- `set(key, obj, value)` - curried. return new object with key set as value on obj.
+- `set(key, obj, value)` - curried. return new object with key set as value on obj. No array support.
+- `setIn(arrayPath, obj, value)` - curried. Returns new objects created along path until value is set. Uses `set` internally.
 - `thunkAction` - Like createSelector but it builds and dispatches an action creator.
 - `thunkSelect(selector, props)` - Send getState() and props to selector from thunk arg signature.

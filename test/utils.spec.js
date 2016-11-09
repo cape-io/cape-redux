@@ -3,9 +3,9 @@ import { createStore } from 'redux'
 import { constant, flow, isFunction, nthArg, partial, property } from 'lodash'
 
 import {
-  addListener, createReducer, merge, set, thunkAction, mapDispatchToProps, thunkSelect,
+  addListener, createReducer, merge, set, setIn, thunkAction, mapDispatchToProps, thunkSelect,
 } from '../src'
-import { state, props } from './mock'
+import { collection, state, props } from './mock'
 
 test('thunkAction', (t) => {
   t.plan(6)
@@ -86,6 +86,20 @@ test('set', (t) => {
   const obj3 = set('bar', obj2, 'ice')
   t.false(obj3 === obj2)
   t.deepEqual(obj3, { foo: 'dog', bar: 'ice' })
+  t.end()
+})
+test('setIn', (t) => {
+  const updateTitle = setIn([ 'a1', 'title' ])
+  const res1 = updateTitle(collection, 'apples')
+  t.false(collection === res1)
+  t.false(collection.a1 === res1.a1, 'a1')
+  t.equal(res1.a1.title, 'apples', 'title')
+  t.equal(collection.a1.creator, res1.a1.creator, 'a1 creator')
+  t.equal(collection.a2, res1.a2, 'a2')
+  t.equal(collection.a3, res1.a3, 'a3')
+  const res2 = setIn([ 'a3', 'creator', 'anon', 'name' ], collection, 'drone')
+  t.equal(collection.a1.creator.anon, res2.a1.creator.anon)
+  t.equal(res2.a3.creator.anon.name, 'drone')
   t.end()
 })
 test('thunkSelect', (t) => {
