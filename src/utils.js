@@ -1,4 +1,4 @@
-import { curry, flow, isFunction, partial } from 'lodash'
+import { curry, flow, isFunction, partial, rearg } from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
 
@@ -14,7 +14,7 @@ export function mapDispatchToProps(getActions) {
   return (dispatch, props) => bindActionCreators(getActions(props), dispatch)
 }
 export function merge(object, ...sources) { return Object.assign({}, object, ...sources) }
-export const fpMerge = curry(merge, 2)
+export const fpMerge = curry(rearg(merge, [ 1, 0 ]), 2)
 export const set = curry((key, state, value) => ({ ...state, [key]: value }))
 export const setIn = curry(([ key, ...rest ], state, value) => {
   if (!rest.length) return set(key, state, value)
@@ -32,4 +32,7 @@ export function thunkAction(...funcs) {
 export function thunkSelect(selector, props) {
   if (!isFunction(selector)) throw new Error('selector must be a function')
   return (dispatch, getState) => selector(getState(), props)
+}
+export function wPay(actionReducer) {
+  return (state, action) => actionReducer(state, action.payload)
 }

@@ -3,7 +3,8 @@ import { createStore } from 'redux'
 import { constant, flow, isFunction, nthArg, partial, property } from 'lodash'
 
 import {
-  addListener, createReducer, merge, set, setIn, thunkAction, mapDispatchToProps, thunkSelect,
+  addListener, createReducer, merge, fpMerge, set, setIn,
+  thunkAction, mapDispatchToProps, thunkSelect,
 } from '../src'
 import { collection, state, props } from './mock'
 
@@ -75,6 +76,12 @@ test('merge', (t) => {
   t.false(obj2 === merged)
   t.false(obj3 === merged)
   t.deepEqual(merged, { kai: 'foo', rev: 'bar', same: 'diff', sally: 'hair' })
+  t.end()
+})
+test('fpMerge', (t) => {
+  const obj1 = { kai: 'foo', rev: 'minor', same: 'same' }
+  const obj2 = { rev: 'bar' }
+  t.equal(fpMerge(obj2, obj1).rev, 'bar')
   t.end()
 })
 test('set', (t) => {
