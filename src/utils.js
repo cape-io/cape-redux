@@ -1,6 +1,9 @@
-import { curry, flow, forEach, isArray, over, partial, rearg } from 'lodash'
+import {
+  curry, flow, forEach, isArray, isUndefined, noop, omitBy, over, partial, rearg,
+} from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
+import { validateProps } from './createAction'
 
 // Trigger a call to onChange() when result of selector changes.
 export function addListener(selector, store, onChange) {
@@ -29,6 +32,12 @@ export function thunkAction(...funcs) {
     if (isArray(action)) return forEach(action, dispatch)
     return dispatch(action)
   }
+}
+export function selectorAction(type, payloadSelector, metaSelector = noop) {
+  validateProps(type, payloadSelector, metaSelector)
+  return thunkAction(payloadSelector, metaSelector,
+    (payload, meta) => omitBy({ type, payload, meta }, isUndefined)
+  )
 }
 export function wPyld(actionReducer) {
   return (state, action) => actionReducer(state, action.payload)

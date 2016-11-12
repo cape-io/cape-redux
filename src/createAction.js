@@ -23,10 +23,14 @@ export const hasError = cond([
   [ overSome(arg2True, payloadIsErr), stubTrue ], [ stubTrue, noop ],
 ])
 export const getMeta = cond([ [ arg2True, nthArg(2) ], [ stubTrue, nthArg(1) ] ])
-// @TODO Need some validation of payload.
-export function createAction(type, payloadCreator = getPayload, metaCreator = getMeta) {
+export function validateProps(type, payloadCreator, metaCreator) {
+  if (!isString(type)) throw new Error('type must be a string')
   if (!isFunction(payloadCreator)) throw new Error('payloadCreator must be a func.')
   if (!isFunction(metaCreator)) throw new Error('metaCreator must be a func.')
+}
+// @TODO Need some validation of payload.
+export function createAction(type, payloadCreator = getPayload, metaCreator = getMeta) {
+  validateProps(type, payloadCreator, metaCreator)
   return flow(
     over(constant(type), payloadCreator, hasError, metaCreator),
     zipObject([ 'type', 'payload', 'error', 'meta' ]),

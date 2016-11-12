@@ -1,15 +1,17 @@
 import test from 'tape'
 import { createStore } from 'redux'
-import { constant, isFunction, over, partial, property } from 'lodash'
+import { constant, isFunction, nthArg, over, partial, partialRight, property } from 'lodash'
 
 import {
-  addListener, createReducer, merge, fpMerge, set, setIn,
+  addListener, createReducer, merge, fpMerge, selectorAction, set, setIn,
   thunkAction, mapDispatchToProps,
 } from '../src'
 import { collection, state, props } from './mock'
 
+const getState = constant(state)
+
 test('thunkAction', (t) => {
-  t.plan(8)
+  t.plan(12)
   function selector(arg1, arg2) {
     t.equal(arg1, state, 'state')
     t.equal(arg2, props, 'props')
@@ -23,15 +25,20 @@ test('thunkAction', (t) => {
   t.ok(isFunction(createdActionBuilder), 'isFunction')
   const calledAction = createdActionBuilder(props)
   t.ok(isFunction(calledAction), 'isFunction')
-  const getState = constant(state)
   function dispatch(act) {
     t.equal(act.type, 'foo', 'action obj')
   }
   calledAction(dispatch, getState)
-  thunkAction(selector, over([ actionBuilder, actionBuilder ]))(props)(dispatch, getState)
-  t.end()
+  thunkAction(selector, over(actionBuilder, actionBuilder))(props)(dispatch, getState)
 })
-
+test('selectorAction', (t) => {
+  t.plan(2)
+  const getPay = property('collection.a1.id')
+  const dispatch = partialRight(t.deepEqual, { type: 'angry', payload: 'a1' })
+  selectorAction('angry', getPay)()(dispatch, getState)
+  const dispatch2 = partialRight(t.deepEqual, { type: 'angry', payload: 'a1', meta: 'happy' })
+  selectorAction('angry', getPay, nthArg(1))('happy')(dispatch2, getState)
+})
 function makeAction(type) { return { type } }
 test('mapDispatchToProps', (t) => {
   function getActions({ item, title }) {
