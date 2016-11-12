@@ -1,4 +1,4 @@
-import { curry, flow, isFunction, partial, rearg } from 'lodash'
+import { curry, flow, forEach, isArray, over, partial, rearg } from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
 
@@ -23,16 +23,13 @@ export const setIn = curry(([ key, ...rest ], state, value) => {
 export const imSet = curry((key, state, value) => state.set(key, value))
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkAction(...funcs) {
-  const action = funcs.pop()
-  return (props, ...args) => (dispatch, getState) => {
-    const params = funcs.map(dependency => dependency(getState(), props, ...args))
-    dispatch(action(...params))
+  const actionBuilder = funcs.pop()
+  return (...actionArgs) => (dispatch, getState) => {
+    const action = actionBuilder(...over(funcs)(getState(), ...actionArgs))
+    if (isArray(action)) return forEach(action, dispatch)
+    return dispatch(action)
   }
 }
-export function thunkSelect(selector, props) {
-  if (!isFunction(selector)) throw new Error('selector must be a function')
-  return (dispatch, getState) => selector(getState(), props)
-}
-export function wPay(actionReducer) {
+export function wPyld(actionReducer) {
   return (state, action) => actionReducer(state, action.payload)
 }

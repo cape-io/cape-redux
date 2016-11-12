@@ -1,34 +1,35 @@
 import test from 'tape'
 import { createStore } from 'redux'
-import { constant, flow, isFunction, nthArg, partial, property } from 'lodash'
+import { constant, isFunction, over, partial, property } from 'lodash'
 
 import {
   addListener, createReducer, merge, fpMerge, set, setIn,
-  thunkAction, mapDispatchToProps, thunkSelect,
+  thunkAction, mapDispatchToProps,
 } from '../src'
 import { collection, state, props } from './mock'
 
 test('thunkAction', (t) => {
-  t.plan(6)
+  t.plan(8)
   function selector(arg1, arg2) {
     t.equal(arg1, state, 'state')
     t.equal(arg2, props, 'props')
     return 'foo'
   }
-  function action(str) {
+  function actionBuilder(str) {
     t.equal(str, 'foo', 'selector result sent to action')
     return { type: str }
   }
-  const createdAction = thunkAction(selector, action)
-  t.ok(isFunction(createdAction), 'isFunction')
-  const calledAction = createdAction(props)
+  const createdActionBuilder = thunkAction(selector, actionBuilder)
+  t.ok(isFunction(createdActionBuilder), 'isFunction')
+  const calledAction = createdActionBuilder(props)
   t.ok(isFunction(calledAction), 'isFunction')
   const getState = constant(state)
   function dispatch(act) {
     t.equal(act.type, 'foo', 'action obj')
-    t.end()
   }
   calledAction(dispatch, getState)
+  thunkAction(selector, over([ actionBuilder, actionBuilder ]))(props)(dispatch, getState)
+  t.end()
 })
 
 function makeAction(type) { return { type } }
@@ -107,12 +108,5 @@ test('setIn', (t) => {
   const res2 = setIn([ 'a3', 'creator', 'anon', 'name' ], collection, 'drone')
   t.equal(collection.a1.creator.anon, res2.a1.creator.anon)
   t.equal(res2.a3.creator.anon.name, 'drone')
-  t.end()
-})
-test('thunkSelect', (t) => {
-  const getState = constant(state)
-  t.equal(thunkSelect(property('user.id'))(null, getState), 'anon')
-  const selector = flow(nthArg(1), property('id'))
-  t.equal(thunkSelect(selector, { id: 'foo', bar: 'cat' })(null, getState), 'foo')
   t.end()
 })
