@@ -115,5 +115,7 @@ test('setIn', (t) => {
   const res2 = setIn([ 'a3', 'creator', 'anon', 'name' ], collection, 'drone')
   t.equal(collection.a1.creator.anon, res2.a1.creator.anon)
   t.equal(res2.a3.creator.anon.name, 'drone')
+  const res3 = setIn([ 'foo', 'bar', 'song' ], {}, 'valueThingy')
+  t.equal(res3.foo.bar.song, 'valueThingy', 'set in empty obj')
   t.end()
 })

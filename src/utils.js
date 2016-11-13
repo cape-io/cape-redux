@@ -1,5 +1,5 @@
 import {
-  curry, flow, forEach, isArray, isUndefined, noop, omitBy, over, partial, rearg,
+  curry, flow, forEach, get, isArray, isUndefined, noop, omitBy, over, partial, rearg,
 } from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
@@ -21,7 +21,7 @@ export const fpMerge = curry(rearg(merge, [ 1, 0 ]), 2)
 export const set = curry((key, state, value) => ({ ...state, [key]: value }))
 export const setIn = curry(([ key, ...rest ], state, value) => {
   if (!rest.length) return set(key, state, value)
-  return set(key, state, setIn(rest, state[key], value))
+  return set(key, state, setIn(rest, get(state, key, {}), value))
 })
 export const imSet = curry((key, state, value) => state.set(key, value))
 // Like createSelector but it builds and dispatches an action creator.
