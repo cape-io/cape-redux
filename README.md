@@ -1,4 +1,4 @@
-# cape-redux v2.1.1
+# cape-redux v2.2.0
 
 - `addListener(selector, store, onChange)` - Trigger a call to onChange() when result of selector changes.
 - `createAction(type, payloadCreator)` - Makes an action creator.
@@ -11,3 +11,4 @@
 - `setIn(arrayPath, obj, value)` - curried. Returns new objects created along path until value is set. Uses `set` internally.
 - `thunkAction` - Like createSelector but it builds and dispatches an action creator. To dispatch many actions return array from builder function.
 - `selectorAction(type, payloadSelector, metaSelector = noop)` Uses thunkAction to create an action from selectors.
+- `thunkSelectorAction(actionSelector)` A selector that returns an action object after it is sent state. Dispatch is called on action.

@@ -34,9 +34,9 @@ test('thunkAction', (t) => {
 test('selectorAction', (t) => {
   t.plan(2)
   const getPay = property('collection.a1.id')
-  const dispatch = partialRight(t.deepEqual, { type: 'angry', payload: 'a1' })
+  const dispatch = partialRight(t.deepEqual, { type: 'Angry', payload: 'a1' })
   selectorAction('angry', getPay)()(dispatch, getState)
-  const dispatch2 = partialRight(t.deepEqual, { type: 'angry', payload: 'a1', meta: 'happy' })
+  const dispatch2 = partialRight(t.deepEqual, { type: 'Angry', payload: 'a1', meta: 'happy' })
   selectorAction('angry', getPay, nthArg(1))('happy')(dispatch2, getState)
 })
 function makeAction(type) { return { type } }

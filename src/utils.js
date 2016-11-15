@@ -33,11 +33,16 @@ export function thunkAction(...funcs) {
     return dispatch(action)
   }
 }
+// Uses thunkAction to create an action from selectors.
 export function selectorAction(type, payloadSelector, metaSelector = noop) {
   validateProps(type, payloadSelector, metaSelector)
   return thunkAction(payloadSelector, metaSelector,
     (payload, meta) => omitBy({ type, payload, meta }, isUndefined)
   )
+}
+// Thunkify a selector that creates an action object after giving it state.
+export function thunkSelectorAction(actionSelector) {
+  return (dispatch, getState) => dispatch(actionSelector(getState()))
 }
 export function wPyld(actionReducer) {
   return (state, action) => actionReducer(state, action.payload)
