@@ -5,6 +5,7 @@
 - `createReducer(reducers, defaultState = {}, opts)` - Send reducers obj where key is type and value is func with (state, payload) sig. Default opts `{ actionPick: property('payload'), makeImmutable: false, skipErrors: true, skipNoPayload: false }`. This will skip over actions with errors but allow actions with no payload to be sent to the action type reducers. Can pass `isInvalidAction()` in opts to add some custom checking.
 - `mapDispatchToProps(getActions)` - getActions func is passed state. Result is passed to bindActionCreators.
 - `merge(object, [sources])` - Creates a new object with the result of sources spread over object.
+- `noopAction(typeId)` - Returns a function that will always return an the exact same object with a type prop set to typeId.
 - `fpMerge(source, object)` - Curried. Object is 2nd arg.
 - `imSet(key, obj, value)` - curried. Calls `set` on object with `key` and `value` arguments.
 - `set(key, obj, value)` - curried. return new object with key set as value on obj. No array support.

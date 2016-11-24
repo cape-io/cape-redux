@@ -4,7 +4,7 @@ import { constant, isFunction, nthArg, over, partial, partialRight, property } f
 
 import {
   addListener, createReducer, merge, fpMerge, selectorAction, set, setIn,
-  thunkAction, mapDispatchToProps,
+  thunkAction, mapDispatchToProps, noopAction,
 } from '../src'
 import { collection, state, props } from './mock'
 
@@ -117,5 +117,13 @@ test('setIn', (t) => {
   t.equal(res2.a3.creator.anon.name, 'drone')
   const res3 = setIn([ 'foo', 'bar', 'song' ], {}, 'valueThingy')
   t.equal(res3.foo.bar.song, 'valueThingy', 'set in empty obj')
+  t.end()
+})
+test('noopAction', (t) => {
+  const act = noopAction('cape/TEST')
+  t.ok(isFunction(act))
+  const obj1 = act('foo')
+  t.deepEqual(obj1, { type: 'cape/TEST' })
+  t.equal(obj1, act('bar'))
   t.end()
 })
