@@ -1,6 +1,6 @@
 import test from 'tape'
 import { noop } from 'lodash'
-import { set } from 'cape-lodash'
+import { setKey } from 'cape-lodash'
 import {
   missingType, missingPayload, getError, invalidAction, noReducerOfType,
   createReducer, reducerDefaults,
@@ -53,11 +53,11 @@ test('createReducer', (t) => {
   const reducer = createReducer({
     thing1: (state, payload) => {
       t.equal(payload, 'foo')
-      return set('a', state, payload)
+      return setKey('a', state, payload)
     },
     thing2: (state, payload) => {
       t.equal(payload, 'bar')
-      return set('b', state, payload)
+      return setKey('b', state, payload)
     },
   })
   const st1 = reducer(undefined, { type: 'thing1', payload: 'foo' })
