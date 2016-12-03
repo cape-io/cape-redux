@@ -1,9 +1,9 @@
 import test from 'tape'
 import { noop } from 'lodash'
-
+import { set } from 'cape-lodash'
 import {
   missingType, missingPayload, getError, invalidAction, noReducerOfType,
-  createReducer, reducerDefaults, set,
+  createReducer, reducerDefaults,
 } from '../src'
 
 test('missingType', (t) => {

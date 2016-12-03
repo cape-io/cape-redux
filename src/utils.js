@@ -16,16 +16,7 @@ export function addListener(selector, store, onChange) {
 export function mapDispatchToProps(getActions) {
   return (dispatch, props) => bindActionCreators(getActions(props), dispatch)
 }
-export function merge(object, ...sources) { return Object.assign({}, object, ...sources) }
-export const fpMerge = curry(rearg(merge, [ 1, 0 ]), 2)
-export function set(state, key, value) { return { ...state, [key]: value } }
-export const setKey = curry(rearg(set, [ 1, 0, 2 ]))
-export const setVal = curry(rearg(set, [ 2, 0, 1 ]))
-export const setIn = curry(([ key, ...rest ], state, value) => {
-  if (!rest.length) return set(key, state, value)
-  return set(key, state, setIn(rest, get(state, key, {}), value))
-})
-export const imSet = curry((key, state, value) => state.set(key, value))
+
 export const noopAction = flow(createObj('type'), constant)
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkAction(...funcs) {
