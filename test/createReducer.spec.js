@@ -1,9 +1,9 @@
 import test from 'tape'
-import { isFunction, noop } from 'lodash'
+import { noop } from 'lodash'
 
 import {
   missingType, missingPayload, getError, invalidAction, noReducerOfType,
-  immutableState, imSet, createReducer, reducerDefaults, set,
+  createReducer, reducerDefaults, set,
 } from '../src'
 
 test('missingType', (t) => {
@@ -49,14 +49,6 @@ test('invalidAction', (t) => {
   t.true(skipAct2({ type: 'create' }), 'no pay skip')
   t.end()
 })
-test('immutableState', (t) => {
-  const state = { a: 'b' }
-  t.equal(immutableState(state, reducerDefaults({})), state)
-  const state2 = immutableState(state, reducerDefaults({ makeImmutable: true }))
-  t.deepEqual(state, state2)
-  t.true(isFunction(state2.asMutable))
-  t.end()
-})
 test('createReducer', (t) => {
   const reducer = createReducer({
     thing1: (state, payload) => {
@@ -73,15 +65,5 @@ test('createReducer', (t) => {
   const st2 = reducer(st1, { type: 'thing2', payload: 'bar' })
   t.deepEqual(st2, { a: 'foo', b: 'bar' })
   t.false(st2.asMutable)
-  const imReducer = createReducer({
-    thing3: (state, payload) => {
-      t.true(isFunction(state.asMutable))
-      t.equal(payload, 'eats pie')
-      return imSet('bob', state, payload)
-    },
-  }, st2, { makeImmutable: true })
-  const st3 = imReducer(undefined, { type: 'thing3', payload: 'eats pie' })
-  t.true(isFunction(st3.asMutable))
-  t.deepEqual(st3, { a: 'foo', b: 'bar', bob: 'eats pie' })
   t.end()
 })

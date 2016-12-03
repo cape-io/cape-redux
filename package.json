@@ -1,6 +1,6 @@
 {
   "name": "cape-redux",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "A few redux helper/utility functions.",
   "main": "lib/index.js",
   "author": "Kai Curry <kai@cape.io> (http://www.cape.io/)",
@@ -17,8 +17,7 @@
   "dependencies": {
     "cape-lodash": "^1.7.0",
     "lodash": "^4.17.2",
-    "redux": "^3.6.0",
-    "seamless-immutable": "^6.3.0"
+    "redux": "^3.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

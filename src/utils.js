@@ -18,7 +18,9 @@ export function mapDispatchToProps(getActions) {
 }
 export function merge(object, ...sources) { return Object.assign({}, object, ...sources) }
 export const fpMerge = curry(rearg(merge, [ 1, 0 ]), 2)
-export const set = curry((key, state, value) => ({ ...state, [key]: value }))
+export function set(state, key, value) { return { ...state, [key]: value } }
+export const setKey = curry(rearg(set, [ 1, 0, 2 ]))
+export const setVal = curry(rearg(set, [ 2, 0, 1 ]))
 export const setIn = curry(([ key, ...rest ], state, value) => {
   if (!rest.length) return set(key, state, value)
   return set(key, state, setIn(rest, get(state, key, {}), value))

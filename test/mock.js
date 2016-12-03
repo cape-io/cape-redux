@@ -1,4 +1,3 @@
-import immutable from 'seamless-immutable'
 export const user = {
   type: 'Person',
   id: 'anon',
@@ -40,7 +39,7 @@ export const collection = {
     },
   },
 }
-export const state = immutable({
+export const state = {
   collection,
   user,
-})
+}
