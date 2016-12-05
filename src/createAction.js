@@ -37,3 +37,12 @@ export function createAction(type, payloadCreator = getPayload, metaCreator = ge
     omitBy(isUndefined)
   )
 }
+export function createSimpleAction(type, payloadCreator = identity, metaCreator = noop) {
+  validateProps(type, payloadCreator, metaCreator)
+  return flow(
+    over(constant(type), payloadCreator, metaCreator),
+    zipObject([ 'type', 'payload', 'meta' ]),
+    omitBy(isUndefined)
+  )
+}
+export const noopAction = flow(createObj('type'), constant)

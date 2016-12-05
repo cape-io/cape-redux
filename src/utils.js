@@ -1,7 +1,7 @@
 import {
-  constant, curry, flow, forEach, get, isArray, isUndefined, noop, omitBy, over, partial, rearg,
+  flow, forEach, isArray, isUndefined, noop, omitBy, over, partial,
 } from 'lodash'
-import { createObj, handleChanges } from 'cape-lodash'
+import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
 import { validateProps } from './createAction'
 
@@ -17,7 +17,6 @@ export function mapDispatchToProps(getActions) {
   return (dispatch, props) => bindActionCreators(getActions(props), dispatch)
 }
 
-export const noopAction = flow(createObj('type'), constant)
 // Like createSelector but it builds and dispatches an action creator.
 export function thunkAction(...funcs) {
   const actionBuilder = funcs.pop()

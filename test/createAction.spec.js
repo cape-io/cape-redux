@@ -3,7 +3,7 @@ import { identity, noop } from 'lodash'
 
 import {
   payloadIsErr, payloadFromErr, arg2True, msgObj, getPayload,
-  hasError, getMeta, createAction,
+  hasError, getMeta, createAction, createSimpleAction, noopAction,
 } from '../src'
 
 test('payloadIsErr', (t) => {
@@ -56,5 +56,23 @@ test('createAction', (t) => {
   t.deepEqual(foo('bar', 'data'), { type: 'foo', payload: 'bar', meta: 'data' }, 'meta')
   const bar = createAction('bar', noop)
   t.deepEqual(bar('str'), { type: 'bar' }, 'noop')
+  t.end()
+})
+test('createSimpleAction', (t) => {
+  const foo = createSimpleAction('foo/action')
+  t.deepEqual(foo(), { type: 'foo/action' }, 'no args')
+  t.deepEqual(foo('bar'), { type: 'foo/action', payload: 'bar' }, 'str arg')
+  t.deepEqual(foo('bar', 'data'), { type: 'foo/action', payload: 'bar' }, 'no meta default')
+  const bar = createAction('bar', noop)
+  t.deepEqual(bar('str'), { type: 'bar' }, 'noop payload') // use noopAction instead.
+  t.end()
+})
+test('noopAction', (t) => {
+  const act = noopAction('cape/TEST')
+  t.equal(typeof act, 'function')
+  const obj1 = act('foo')
+  t.deepEqual(obj1, { type: 'cape/TEST' })
+  t.equal(obj1, act('bar'))
+  t.equal(obj1, act('bar', 'biz', 'baz', 'whatever'))
   t.end()
 })

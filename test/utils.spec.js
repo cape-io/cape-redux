@@ -4,7 +4,7 @@ import { constant, isFunction, nthArg, over, partial, partialRight, property } f
 
 import {
   addListener, createReducer, selectorAction,
-  thunkAction, mapDispatchToProps, noopAction,
+  thunkAction, mapDispatchToProps,
 } from '../src'
 import { state, props } from './mock'
 
@@ -74,13 +74,4 @@ test('addListener', (t) => {
   addListener(selector, store, onChange)
   store.dispatch({ type: 'UPDATE', payload: 'patch' })
   store.dispatch({ type: 'OTHER', payload: 'apple' })
-})
-
-test('noopAction', (t) => {
-  const act = noopAction('cape/TEST')
-  t.ok(isFunction(act))
-  const obj1 = act('foo')
-  t.deepEqual(obj1, { type: 'cape/TEST' })
-  t.equal(obj1, act('bar'))
-  t.end()
 })
