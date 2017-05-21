@@ -1,5 +1,5 @@
 import {
-  flow, forEach, isArray, isUndefined, noop, omitBy, over, partial,
+  flow, forEach, isArray, isFunction, isUndefined, noop, omitBy, over, partial,
 } from 'lodash'
 import { handleChanges } from 'cape-lodash'
 import { bindActionCreators } from 'redux'
@@ -11,10 +11,11 @@ export function addListener(selector, store, onChange) {
     flow(store.getState, selector), partial(onChange, store)
   ))
 }
+export const dispatcher = dispatch => action => flow(action, dispatch)
 
 // getActions() is passed props. Result is passed to bindActionCreators.
 export function mapDispatchToProps(getActions) {
-  return (dispatch, props) => bindActionCreators(getActions(props), dispatch)
+  return (dispatch, props) => ({ dispatch, ...bindActionCreators(getActions(props), dispatch) })
 }
 
 // Like createSelector but it builds and dispatches an action creator.
@@ -39,4 +40,13 @@ export function thunkSelectorAction(actionSelector) {
 }
 export function wPyld(actionReducer) {
   return (state, action) => actionReducer(state, action.payload)
+}
+export function createMiddleware(actions) {
+  return store => next => (action) => {
+    if (!action.type) return next(action)
+    if (isFunction(actions[action.type])) {
+      return actions[action.type]({ action, next, store })
+    }
+    return next(action)
+  }
 }
