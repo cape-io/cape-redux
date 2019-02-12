@@ -1,5 +1,5 @@
 import test from 'tape'
-import { identity, noop } from 'lodash'
+import { identity, isError, noop } from 'lodash/fp'
 
 import {
   payloadIsErr, payloadFromErr, arg2True, msgObj, getPayload,
@@ -11,6 +11,8 @@ test('payloadIsErr', (t) => {
   t.ok(payloadIsErr({ error: true }), 'error prop')
   t.ok(payloadIsErr({ isBoom: true }), 'boom')
   t.false(payloadIsErr('string'))
+  t.false(isError(undefined), 'lodash empty')
+  t.false(payloadIsErr(), 'empty')
   t.end()
 })
 test('payloadFromErr', (t) => {
@@ -23,6 +25,7 @@ test('arg2True', (t) => {
   t.false(arg2True(true, false), 'bool')
   t.false(arg2True(false, 'meta'), 'str')
   t.false(arg2True(false, { meta: 'data' }), 'obj')
+  t.false(arg2True(), 'empty')
   t.end()
 })
 test('msgObj', (t) => {
@@ -39,7 +42,7 @@ test('hasError', (t) => {
   t.true(hasError(true, true), 'bool arg 2')
   t.true(hasError(new Error('something')), 'error')
   t.false(hasError(false, new Error('something')), 'error arg2')
-  t.false(hasError(), 'empty')
+  t.equal(hasError(), undefined, 'empty')
   t.false(hasError('string'))
   t.false(hasError('string', { meta: 'data' }))
   t.end()

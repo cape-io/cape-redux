@@ -1,6 +1,5 @@
 import test from 'tape'
-import { noop } from 'lodash'
-import { setKey } from 'cape-lodash'
+import { noop, set } from 'lodash/fp'
 import {
   missingType, missingPayload, getError, invalidAction, noReducerOfType,
   createReducer, reducerDefaults,
@@ -41,7 +40,7 @@ test('invalidAction', (t) => {
   t.true(skipAction({ type: 'update', error: true, payload: 'message' }), 'method missing')
   t.false(skipAction({ type: 'create' }), 'type and no pay ok')
   const skipAct2 = invalidAction(
-    reducers, reducerDefaults({ skipErrors: false, skipNoPayload: true })
+    reducers, reducerDefaults({ skipErrors: false, skipNoPayload: true }),
   )
   t.true(skipAct2({ foo: true, payload: 'string' }), 'no type')
   t.false(skipAct2({ type: 'create', error: true, payload: 'message' }), 'error')
@@ -53,11 +52,11 @@ test('createReducer', (t) => {
   const reducer = createReducer({
     thing1: (state, payload) => {
       t.equal(payload, 'foo')
-      return setKey('a', state, payload)
+      return set('a', payload, state)
     },
     thing2: (state, payload) => {
       t.equal(payload, 'bar')
-      return setKey('b', state, payload)
+      return set('b', payload, state)
     },
   })
   const st1 = reducer(undefined, { type: 'thing1', payload: 'foo' })
